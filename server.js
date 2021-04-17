@@ -1,19 +1,28 @@
-const express = require("express");
-const morgan = require("morgan");
 const mongoose = require("mongoose");
-// set up the express app
- const app = express();
- const PORT = process.env.PORT || 3001;
+const express = require("express");
+const path = require("path");
 
+const PORT = process.env.PORT || 3001;
 
-// middleware
-app.use(express.static(path.join(__dirname, 'public')));
-//  (below middleware)for PUT and POST routes - comment these to see what happens (after it's running.)
+const app = express();
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.listen(PORT, () => {
-    console.log('Server listening on: http://localhost:' + PORT);
-  });
+app.use(express.static("public"));
 
-//   next: install npm i, express, morgan, mongoose
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+  useUnifiedTopology: true
+});
+//might need
+// app.use(require("./routes/api.js"));
+// app.use(require("./routes/views.js"));
+app.use(require("./routes"));
+
+
+app.listen(PORT, () => {
+  console.log(`App running on port ${PORT}!`);
+});
